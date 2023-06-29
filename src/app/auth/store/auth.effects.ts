@@ -97,7 +97,7 @@ export class AuthEffects {
                   email: resData.email,
                   userId: resData.localId,
                   token: resData.idToken,
-                  expirationDate: expirationDate
+                  expirationDate: expirationDate,
                 });
               }),
               catchError(error => {

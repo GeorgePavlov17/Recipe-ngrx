@@ -5,6 +5,8 @@ import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../store/app.reducer';
+import * as RecupeAction from '../store/recipe.action';
+import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
 import { map, switchMap } from 'rxjs';
 
 @Component({
@@ -42,6 +44,7 @@ export class RecipeDetailComponent implements OnInit {
 
   onAddToShoppingList() {
     this.recipeService.addIngredientsToShoppingList(this.recipe.ingredients);
+    // this.store.dispatch(new ShoppingListActions.AddIngredient(this.recipe.ingredients));
   }
 
   onEditRecipe() {
@@ -50,7 +53,8 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   onDeleteRecipe() {
-    this.recipeService.deleteRecipe(this.id);
+    // this.recipeService.deleteRecipe(this.id);
+    this.store.dispatch(new RecupeAction.DeleteRecipe(this.id));
     this.router.navigate(['/recipes']);
   }
 
