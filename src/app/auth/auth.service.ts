@@ -27,51 +27,51 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {}
 
-  signup(email: string, password: string) {
-    return this.http
-      .post<AuthResponseData>(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCUJdtEXIvVgfl4leR-oF82I3OE9vwoIMM',
-        {
-          email: email,
-          password: password,
-          returnSecureToken: true
-        }
-      )
-      .pipe(
-        catchError(this.handleError),
-        tap(resData => {
-          this.handleAuthentication(
-            resData.email,
-            resData.localId,
-            resData.idToken,
-            +resData.expiresIn
-          );
-        })
-      );
-  }
+  // signup(email: string, password: string) {
+  //   return this.http
+  //     .post<AuthResponseData>(
+  //       'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCUJdtEXIvVgfl4leR-oF82I3OE9vwoIMM',
+  //       {
+  //         email: email,
+  //         password: password,
+  //         returnSecureToken: true
+  //       }
+  //     )
+  //     .pipe(
+  //       catchError(this.handleError),
+  //       tap(resData => {
+  //         this.handleAuthentication(
+  //           resData.email,
+  //           resData.localId,
+  //           resData.idToken,
+  //           +resData.expiresIn
+  //         );
+  //       })
+  //     );
+  // }
 
-  login(email: string, password: string) {
-    return this.http
-      .post<AuthResponseData>(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCUJdtEXIvVgfl4leR-oF82I3OE9vwoIMM',
-        {
-          email: email,
-          password: password,
-          returnSecureToken: true
-        }
-      )
-      .pipe(
-        catchError(this.handleError),
-        tap(resData => {
-          this.handleAuthentication(
-            resData.email,
-            resData.localId,
-            resData.idToken,
-            +resData.expiresIn
-          );
-        })
-      );
-  }
+  // login(email: string, password: string) {
+  //   return this.http
+  //     .post<AuthResponseData>(
+  //       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCUJdtEXIvVgfl4leR-oF82I3OE9vwoIMM',
+  //       {
+  //         email: email,
+  //         password: password,
+  //         returnSecureToken: true
+  //       }
+  //     )
+  //     .pipe(
+  //       catchError(this.handleError),
+  //       tap(resData => {
+  //         this.handleAuthentication(
+  //           resData.email,
+  //           resData.localId,
+  //           resData.idToken,
+  //           +resData.expiresIn
+  //         );
+  //       })
+  //     );
+  // }
 
   autoLogin() {
     const userData: {
@@ -105,11 +105,14 @@ export class AuthService {
       this.autoLogout(expirationDuration);
     }
   }
+  autoLogout(expirationDuration: number) {
+    throw new Error('Method not implemented.');
+  }
 
   logout() {
     // this.user.next(null);
     this.store.dispatch(new AuthActions.Logout());
-    this.router.navigate(['/auth']);
+    // this.router.navigate(['/auth']);
     localStorage.removeItem('userData');
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
@@ -117,10 +120,18 @@ export class AuthService {
     this.tokenExpirationTimer = null;
   }
 
-  autoLogout(expirationDuration: number) {
+  setLogoutTimer(expirationDuration: number) {
     this.tokenExpirationTimer = setTimeout(() => {
-      this.logout();
+      // this.logout();
+      this.store.dispatch(new AuthActions.Logout());
     }, expirationDuration);
+  }
+
+  clearLogoutTimer() {
+    if(this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+      this.tokenExpirationTimer = null;
+    }
   }
 
   private handleAuthentication(
